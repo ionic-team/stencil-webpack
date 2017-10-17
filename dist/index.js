@@ -64,12 +64,10 @@ StencilPlugin.prototype.apply = function(compiler) {
     glob(srcPath, (err, files) => {
       if (files) {
         files.forEach((file) => {
-          console.log('process a file');
           writes.push(process(file, compilation));
         });
       }
       Promise.all(writes).then(() => {
-        console.log('all done moving files');
         callback();
       });
     });
