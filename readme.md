@@ -1,3 +1,5 @@
+# NOTE: This is a WIP PoC and not ready for consummption yet...
+
 [![npm][npm-badge]][npm-badge-url]
 # Stencil: A Compiler for Web Components
 
