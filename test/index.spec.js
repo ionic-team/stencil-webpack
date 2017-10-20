@@ -34,34 +34,62 @@ describe('plugin', () => {
   });
 
   it('handles the emit', () => {
-    const plugin = new Plugin();
+    const plugin = new Plugin('node_modules/tool-components/toolcomponents');
     plugin.apply(mockCompiler);
     expect(mockCompiler.plugin.calledOnce).to.be.true;
     expect(mockCompiler.plugin.calledWith('emit')).to.be.true;
   });
 
   describe('options', () => {
-    it('globs a single string properly (currently just the default globbing)', () => {
-      const plugin = new Plugin();
+    it('globs a single string property', () => {
+      const plugin = new Plugin('node_modules/brush-components/brushcomponents');
       plugin.apply(mockCompiler);
       mockCompiler.plugin.yield(compilation, mockCallback);
       expect(mockGlob.calledOnce).to.be.true;
       expect(
         mockGlob.calledWith(
-          '/Users/test/node_modules/test-components/testcomponents/**/*'
+          '/Users/test/node_modules/brush-components/brushcomponents/**/*'
         )
       ).to.be.true;
     });
 
     it('globs a list of paths', () => {
-      // WIP
+      const plugin = new Plugin([
+        'node_modules/brush-components/brushcomponents',
+        'node_modules/tool-components/toolcomponents',
+        'node_modules/page-components/pagecomponents',
+        'node_modules/web-components/webcomponents',
+      ]);
+      plugin.apply(mockCompiler);
+      mockCompiler.plugin.yield(compilation, mockCallback);
+      expect(mockGlob.callCount).to.equal(4);
+      expect(
+        mockGlob.calledWith(
+          '/Users/test/node_modules/brush-components/brushcomponents/**/*'
+        )
+      ).to.be.true;
+      expect(
+        mockGlob.calledWith(
+          '/Users/test/node_modules/tool-components/toolcomponents/**/*'
+        )
+      ).to.be.true;
+      expect(
+        mockGlob.calledWith(
+          '/Users/test/node_modules/page-components/pagecomponents/**/*'
+        )
+      ).to.be.true;
+      expect(
+        mockGlob.calledWith(
+          '/Users/test/node_modules/web-components/webcomponents/**/*'
+        )
+      ).to.be.true;
     });
   });
 
   describe('globbed files', () => {
     let plugin;
     beforeEach(() => {
-      plugin = new Plugin();
+      plugin = new Plugin('node_modules/web-components/webcomponents');
       plugin.apply(mockCompiler);
 
       mockGlob.onCall(0).yields(null, ['file1', 'file2', 'file3.14159']);

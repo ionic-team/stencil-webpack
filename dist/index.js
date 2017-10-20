@@ -9,9 +9,10 @@ module.exports = {
   StencilPlugin: StencilPlugin
 };
 
-function StencilPlugin() {}
+function StencilPlugin(src) {
+  this.sources = (typeof src === 'string' ? [src] : src);
+}
 
-const src = 'node_modules/test-components/testcomponents/**/*';
 const dest = 'build/testcomponents';
 
 function fileStat(file) {
@@ -58,17 +59,19 @@ function process(file, compilation) {
 }
 
 StencilPlugin.prototype.apply = function(compiler) {
-  compiler.plugin('emit', function(compilation, callback) {
-    const srcPath = path.join(compilation.options.context, src);
+  compiler.plugin('emit', (compilation, callback) => {
     const writes = [];
-    glob(srcPath, (err, files) => {
-      if (files) {
-        files.forEach((file) => {
-          writes.push(process(file, compilation));
+    this.sources.forEach((src) => {
+      const srcPath = path.join(compilation.options.context, src, '**/*');
+      glob(srcPath, (err, files) => {
+        if (files) {
+          files.forEach((file) => {
+            writes.push(process(file, compilation));
+          });
+        }
+        Promise.all(writes).then(() => {
+          callback();
         });
-      }
-      Promise.all(writes).then(() => {
-        callback();
       });
     });
   });
