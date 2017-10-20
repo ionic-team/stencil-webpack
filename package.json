@@ -1,13 +1,12 @@
 {
   "name": "@stencil/webpack",
-  "version": "1.0.0",
-  "description": "A WebPack plugin for including stencil components",
+  "version": "0.1.0",
+  "license": "MIT",
   "main": "index.js",
   "scripts": {
     "test": "mocha ./test/**/*.spec.js"
   },
   "author": "Ionic",
-  "license": "MIT",
   "dependencies": {
     "glob": "^7.1.2",
     "path": "^0.12.7"
@@ -17,5 +16,20 @@
     "mocha": "^4.0.1",
     "proxyquire": "^1.8.0",
     "sinon": "^4.0.1"
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ionic-team/stencil-webpack.git"
+  },
+  "author": "Ionic Team",
+  "homepage": "https://stenciljs.com/",
+  "description": "The Stencil Webpack Plugin",
+  "keywords": [
+    "web components",
+    "components",
+    "custom elements",
+    "stencil",
+    "ionic",
+    "webpack"
+  ]
 }
