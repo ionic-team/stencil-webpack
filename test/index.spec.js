@@ -89,7 +89,7 @@ describe('plugin', () => {
   describe('globbed files', () => {
     let plugin;
     beforeEach(() => {
-      plugin = new Plugin('node_modules/web-components/webcomponents');
+      plugin = new Plugin('node_modules/ford-prefect/fordprefect');
       plugin.apply(mockCompiler);
 
       mockGlob.onCall(0).yields(null, ['file1', 'file2', 'file3.14159']);
@@ -121,12 +121,12 @@ describe('plugin', () => {
 
     it('adds the size and contents to the compilatiom assets', function(done) {
       mockCompiler.plugin.yield(compilation, () => {
-        expect(compilation.assets['build/testcomponents/file1'].size()).to.equal(42);
-        expect(compilation.assets['build/testcomponents/file1'].source()).to.equal('contents 1');
-        expect(compilation.assets['build/testcomponents/file2'].size()).to.equal(73);
-        expect(compilation.assets['build/testcomponents/file2'].source()).to.equal('contents 2');
-        expect(compilation.assets['build/testcomponents/file3.14159'].size()).to.equal(1138);
-        expect(compilation.assets['build/testcomponents/file3.14159'].source()).to.equal('pi');
+        expect(compilation.assets['build/fordprefect/file1'].size()).to.equal(42);
+        expect(compilation.assets['build/fordprefect/file1'].source()).to.equal('contents 1');
+        expect(compilation.assets['build/fordprefect/file2'].size()).to.equal(73);
+        expect(compilation.assets['build/fordprefect/file2'].source()).to.equal('contents 2');
+        expect(compilation.assets['build/fordprefect/file3.14159'].size()).to.equal(1138);
+        expect(compilation.assets['build/fordprefect/file3.14159'].source()).to.equal('pi');
         done();
       });
     });
