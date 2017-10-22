@@ -8,8 +8,15 @@ module.exports = {
   StencilPlugin: StencilPlugin
 };
 
-function StencilPlugin(src) {
-  this.sources = (typeof src === 'string' ? [src] : src);
+function StencilPlugin(config) {
+  if (!config) { throw new Error('No configuration object has been specified.'); }
+  if (!config.collections || config.collections.length === 0) {
+    throw new Error('Must specify component collections.');
+  }
+
+  this.sources = (typeof config.collections === 'string' ?
+    [config.collections] :
+    config.collections);
 }
 
 function fileStat(file) {

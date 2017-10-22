@@ -34,15 +34,40 @@ describe('plugin', () => {
   });
 
   it('handles the emit', () => {
-    const plugin = new Plugin('node_modules/tool-components/toolcomponents');
+    const plugin = new Plugin({
+      collections: 'node_modules/tool-components/toolcomponents'
+    });
     plugin.apply(mockCompiler);
     expect(mockCompiler.plugin.calledOnce).to.be.true;
     expect(mockCompiler.plugin.calledWith('emit')).to.be.true;
   });
 
   describe('options', () => {
+    it('throws an error if no configuration object is given', () => {
+      expect(() => { new Plugin(); }).to.throw(
+        Error, 'No configuration object has been specified.'
+      );
+    });
+
+    it('throws an error if the configurtion object has no collections property', () => {
+      expect(() => { new Plugin({}); }).to.throw(
+        Error, 'Must specify component collections.'
+      );
+      expect(() => { new Plugin({collections: null}); }).to.throw(
+        Error, 'Must specify component collections.'
+      );
+      expect(() => { new Plugin({collections: []}); }).to.throw(
+        Error, 'Must specify component collections.'
+      );
+    }); 
+
+
     it('globs a single string property', () => {
-      const plugin = new Plugin('node_modules/brush-components/brushcomponents');
+      const plugin = new Plugin({
+        collections: [
+          'node_modules/brush-components/brushcomponents'
+        ]
+      });
       plugin.apply(mockCompiler);
       mockCompiler.plugin.yield(compilation, mockCallback);
       expect(mockGlob.calledOnce).to.be.true;
@@ -54,12 +79,14 @@ describe('plugin', () => {
     });
 
     it('globs a list of paths', () => {
-      const plugin = new Plugin([
-        'node_modules/brush-components/brushcomponents',
-        'node_modules/tool-components/toolcomponents',
-        'node_modules/page-components/pagecomponents',
-        'node_modules/web-components/webcomponents',
-      ]);
+      const plugin = new Plugin({
+        collections: [
+          'node_modules/brush-components/brushcomponents',
+          'node_modules/tool-components/toolcomponents',
+          'node_modules/page-components/pagecomponents',
+          'node_modules/web-components/webcomponents',
+        ]
+      });
       plugin.apply(mockCompiler);
       mockCompiler.plugin.yield(compilation, mockCallback);
       expect(mockGlob.callCount).to.equal(4);
@@ -89,7 +116,9 @@ describe('plugin', () => {
   describe('globbed files', () => {
     let plugin;
     beforeEach(() => {
-      plugin = new Plugin('node_modules/ford-prefect/fordprefect');
+      plugin = new Plugin({
+        collections: 'node_modules/ford-prefect/fordprefect'
+      });
       plugin.apply(mockCompiler);
 
       mockGlob.onCall(0).yields(null, ['file1', 'file2', 'file3.14159']);
