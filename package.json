@@ -1,12 +1,11 @@
 {
   "name": "@stencil/webpack",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "license": "MIT",
   "main": "dist/index.js",
   "scripts": {
     "test": "mocha ./test/**/*.spec.js"
   },
-  "author": "Ionic",
   "dependencies": {
     "glob": "^7.1.2",
     "path": "^0.12.7"
