@@ -46,7 +46,7 @@ function read(file) {
 function process(file, dest, compilation) {
   return new Promise((resolve) => {
     (async () => {
-      const outfile = path.join(dest, path.basename(file));
+      const outfile = normalizePath(path.join(dest, path.basename(file)));
       const info = await fileStat(file);
       const contents = await read(file);
       compilation.assets[outfile] = {
@@ -67,11 +67,29 @@ function getDestinationPath(src) {
   return path.join('build', parts[parts.length - 1]);
 }
 
+function normalizePath(str) {
+  // Convert Windows backslash paths to slash paths: foo\\bar ➔ foo/bar
+  // https://github.com/sindresorhus/slash MIT
+  // By Sindre Sorhus
+  const EXTENDED_PATH_REGEX = /^\\\\\?\\/;
+  const NON_ASCII_REGEX = /[^\x00-\x80]+/;
+  const SLASH_REGEX = /\\/g;
+
+  if (EXTENDED_PATH_REGEX.test(str) || NON_ASCII_REGEX.test(str)) {
+    return str;
+  }
+
+  return str.replace(SLASH_REGEX, '/');
+}
+
+
 StencilPlugin.prototype.apply = function(compiler) {
   compiler.plugin('emit', (compilation, callback) => {
     const writes = [];
     this.sources.forEach((src) => {
-      const srcPath = path.join(compilation.options.context, src, '**/*');
+      const srcPath = normalizePath(
+        path.join(compilation.options.context, src, '**/*')
+      );
       const destPath = getDestinationPath(src);
       glob(srcPath, (err, files) => {
         if (files) {

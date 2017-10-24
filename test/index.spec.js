@@ -111,6 +111,23 @@ describe('plugin', () => {
         )
       ).to.be.true;
     });
+
+    it('fixes windows style paths', () => {
+      const plugin = new Plugin({
+        collections: [
+          'node_modules\\brush-components\\brushcomponents'
+        ]
+      });
+      plugin.apply(mockCompiler);
+      mockCompiler.plugin.yield(compilation, mockCallback);
+      expect(mockGlob.calledOnce).to.be.true;
+      expect(
+        mockGlob.calledWith(
+          '/Users/test/node_modules/brush-components/brushcomponents/**/*'
+        )
+      ).to.be.true;
+
+    });
   });
 
   describe('globbed files', () => {
