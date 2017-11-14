@@ -9,14 +9,14 @@ module.exports = {
 };
 
 function StencilPlugin(config) {
-  if (!config) { throw new Error('No configuration object has been specified.'); }
+  if (!config) {
+    throw new Error('No configuration object has been specified.');
+  }
   if (!config.collections || config.collections.length === 0) {
     throw new Error('Must specify component collections.');
   }
 
-  this.sources = (typeof config.collections === 'string' ?
-    [config.collections] :
-    config.collections);
+  this.sources = typeof config.collections === 'string' ? [config.collections] : config.collections;
 }
 
 function fileStat(file) {
@@ -43,20 +43,37 @@ function read(file) {
   });
 }
 
-function process(file, dest, compilation) {
-  return new Promise((resolve) => {
+function processDirectory(compilation, src) {
+  const writes = [];
+  const srcPath = normalizePath(path.join(compilation.options.context, src));
+  const srcGlob = normalizePath(path.join(srcPath, '**/*'));
+  const destPath = normalizePath(getDestinationPath(src));
+  glob(srcGlob, (err, files) => {
+    if (files) {
+      files.forEach(file => {
+        const outfile = normalizePath(path.join(destPath, file.replace(srcPath, '')));
+        writes.push(process(file, outfile, compilation));
+      });
+    }
+  });
+  return writes;
+}
+
+function process(file, outfile, compilation) {
+  return new Promise(resolve => {
     (async () => {
-      const outfile = normalizePath(path.join(dest, path.basename(file)));
       const info = await fileStat(file);
-      const contents = await read(file);
-      compilation.assets[outfile] = {
-        size: function() {
-          return info.size;
-        },
-        source: function() {
-          return contents;
-        }
-      };
+      if (info.isFile()) {
+        const contents = await read(file);
+        compilation.assets[outfile] = {
+          size: function() {
+            return info.size;
+          },
+          source: function() {
+            return contents;
+          }
+        };
+      }
       resolve();
     })();
   });
@@ -82,25 +99,14 @@ function normalizePath(str) {
   return str.replace(SLASH_REGEX, '/');
 }
 
-
 StencilPlugin.prototype.apply = function(compiler) {
   compiler.plugin('emit', (compilation, callback) => {
-    const writes = [];
-    this.sources.forEach((src) => {
-      const srcPath = normalizePath(
-        path.join(compilation.options.context, src, '**/*')
-      );
-      const destPath = getDestinationPath(src);
-      glob(srcPath, (err, files) => {
-        if (files) {
-          files.forEach((file) => {
-            writes.push(process(file, destPath, compilation));
-          });
-        }
-        Promise.all(writes).then(() => {
-          callback();
-        });
-      });
+    let writes = [];
+    this.sources.forEach(src => {
+      writes = writes.concat(processDirectory(compilation, src));
+    });
+    Promise.all(writes).then(() => {
+      callback();
     });
   });
 };

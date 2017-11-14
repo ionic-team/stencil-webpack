@@ -1,14 +1,17 @@
 'use strict';
 
 const expect = require('chai').expect;
-const mockCompiler = require('./mockCompiler');
-const mockFs = require('./mockFs');
+const MockCompiler = require('./mock-compiler');
+const MockFs = require('./mock-fs');
+const MockStat = require('./mock-stat');
 const proxyquire = require('proxyquire');
 const sinon = require('sinon');
 
 describe('plugin', () => {
   let compilation;
   let mockCallback;
+  let mockCompiler;
+  let mockFs;
   let mockGlob;
   let Plugin;
 
@@ -20,6 +23,8 @@ describe('plugin', () => {
       assets: {}
     };
     mockCallback = sinon.stub();
+    mockCompiler = new MockCompiler();
+    mockFs = new MockFs();
     mockGlob = sinon.stub();
     Plugin = proxyquire('../dist/index', {
       glob: mockGlob,
@@ -29,20 +34,23 @@ describe('plugin', () => {
 
   afterEach(() => {
     mockGlob.reset();
-    mockFs.stat.reset();
-    mockFs.readFile.reset();
   });
 
   it('handles the emit', () => {
     const plugin = new Plugin({
       collections: 'node_modules/tool-components/toolcomponents'
     });
+    sinon.spy(mockCompiler, 'plugin');
     plugin.apply(mockCompiler);
     expect(mockCompiler.plugin.calledOnce).to.be.true;
     expect(mockCompiler.plugin.calledWith('emit')).to.be.true;
   });
 
   describe('options', () => {
+    beforeEach(() => {
+      sinon.stub(mockCompiler, 'plugin');
+    });
+
     it('throws an error if no configuration object is given', () => {
       expect(() => { new Plugin(); }).to.throw(
         Error, 'No configuration object has been specified.'
@@ -59,7 +67,7 @@ describe('plugin', () => {
       expect(() => { new Plugin({collections: []}); }).to.throw(
         Error, 'Must specify component collections.'
       );
-    }); 
+    });
 
 
     it('globs a single string property', () => {
@@ -136,12 +144,16 @@ describe('plugin', () => {
       plugin = new Plugin({
         collections: 'node_modules/ford-prefect/fordprefect'
       });
+      sinon.stub(mockCompiler, 'plugin');
       plugin.apply(mockCompiler);
 
+      sinon.stub(mockFs, 'readFile');
+      sinon.stub(mockFs, 'stat');
+
       mockGlob.onCall(0).yields(null, ['file1', 'file2', 'file3.14159']);
-      mockFs.stat.onCall(0).yields(null, {size: 42});
-      mockFs.stat.onCall(1).yields(null, {size: 73});
-      mockFs.stat.onCall(2).yields(null, {size: 1138});
+      mockFs.stat.onCall(0).yields(null, new MockStat(42));
+      mockFs.stat.onCall(1).yields(null, new MockStat(73));
+      mockFs.stat.onCall(2).yields(null, new MockStat(1138));
       mockFs.readFile.onCall(0).yields(null, 'contents 1');
       mockFs.readFile.onCall(1).yields(null, 'contents 2');
       mockFs.readFile.onCall(2).yields(null, 'pi');
