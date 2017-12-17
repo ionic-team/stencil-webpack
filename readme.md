@@ -3,83 +3,53 @@
 
 Stencil is a simple compiler for generating Web Components.
 
-Stencil combines the best concepts of the most popular front-end frameworks into a compile-time rather than a run-time tool.  Stencil takes TypeScript, JSX, a tiny virtual DOM layer, efficient one-way data binding, an asynchronous rendering pipeline (similar to React Fiber), and lazy-loading out of the box, and generates 100% standards-based Web Components that run in any browser supporting the Custom Elements v1 spec.
+The webpack plugin allows apps to easily import components using the webpack bundler. The plugin is for apps with build scripts already using a traditional webpack toolchain. However, webpack is not required to use web components built by Stencil since they are already lazy-load themselves on-demand, and use standardized ES Modules imports.
 
-Stencil components are just Web Components, so they work in any major framework or with no framework at all. In many cases, Stencil can be used as a drop-in replacement for traditional frontend frameworks given the capabilities now available in the browser, though using it as such is certainly not required.
+Stencil combines the best concepts of the most popular front-end frameworks into a compile-time rather than a run-time tool. Stencil's output is just Web Components, so they work in any major framework or with no framework at all.
 
-The Stencil Webpack Plugin allows you to easily use Stencil Component Collections with applications that are built using Webpack.
 
-## Using the Plugin
+## Import Components
 
-Using this plugin is a two-step process. You must import your collections into your project code at some appropriate location depending on the architecture of your application, and you must update your `webpack.config.js` file.
+First install the component library to be used, such as:
 
-### Importing the Collections
-
-In order to use your component collections within an application, you generally have to import them in some manner. This will result in Webpack adding the appropriate Stencil loader scripting to the appropriate bundle.
-
-#### Angular
-
-In an Angular application, you should add the component collection imports to the `app.module.ts` file. You should also make sure you are using the `CUSTOM_ELEMENTS_SCHEMA` as in the following example.
-
-```ts
-import { BrowserModule } from '@angular/platform-browser';
-import { NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
- 
-import { AppComponent } from './app.component';
- 
-import 'accounting-components';
-import 'payroll-components';
-import 'purchasing-components';
-import 'web-components';
- 
-@NgModule({
-  declarations: [
-    AppComponent
-  ],
-  imports: [
-    BrowserModule
-  ],
-  providers: [],
-  bootstrap: [AppComponent],
-  schemas: [
-    CUSTOM_ELEMENTS_SCHEMA
-  ]
-})
-export class AppModule { }
+```js
+npm install @ionic/core
 ```
+
+Next, import the component library within the app's entry file, such as:
+
+```js
+import `@ionic/core`;
+```
+
 
 ### Updating `webpack.config.js`
 
-Once you have the proper Stencil loader scripts bundling with your project, you need to have the collections copied to a known location in the build so the loader can load them as needed. This is where the Stencil Webpack Plugin is used.
+Webpack will bundle the simple "registry" information of all the components into webpack's main bundle, but it does not include the actual component code. Instead the plugin copies external component assets to webpack's output directory, which allows for the web components to be lazy-loaded on-demand by the browser, and only pull down polyfills when required.
 
 After installing the plugin, modify your `webpack.config.js` file as such:
+
+```js
+npm install --save-dev @stencil/webpack
+```
 
 ```js
 const stencil = require('@stencil/webpack');
 
 ...
 
-
   "plugins": [
-    new stencil.StencilPlugin({
-      collections: [
-        'node-modules/accounting-components',
-        'node-modules/payroll-components',
-        'node-modules/purchasing-components',
-        'node-modules/web-components'
-    ]}),
+    new stencil.StencilPlugin()
+  ]
 
 ```
 
-The plugin constructor takes a configuration object. At this time, the only property in this object is the `collections` property. This is in order to support future options.
+## Related
 
-The `collections` property contains an array of component collections you would like to use. If you only have one collection, you can specify just a string instead of an array of strings.
-
-The component collections do not have to be installed in `node-modules` if you do not want to publish them to an NPM registry (though publishing them to either the public registry or to a private registry is suggested). You could, for example, install them in a `web-components` directory if you so desired. Manually copying the component collections as such is beyond the scope of this document.
-
-Once you have this set up, a build (`npm run build` for example) will copy the components to a `build` directory under the output directory for the build following usual Stencil conventions.
-
-**Important:** If you are in an Angular CLI project, you must first eject the project in order to modify the `webpack.config.js` file.
+* [Stencil](https://stenciljs.com/)
+* [Stencil Worldwide Slack](https://stencil-worldwide.slack.com)
+* [Ionic Components](https://www.npmjs.com/package/@ionic/core)
+* [Ionicons](http://ionicons.com/)
 
 
 ## Contributing
@@ -88,7 +58,7 @@ Please see our [Contributor Code of Conduct](https://github.com/ionic-team/ionic
 
 ### Creating an Issue
 
-* If you have a question about using this plugin, please ask on the [Stencil Worldwide Slac](https://stencil-worldwide.slack.com) group.
+* If you have a question about using this plugin, please ask on the [Stencil Worldwide Slack](https://stencil-worldwide.slack.com) group.
 
 * It is required that you clearly describe the steps necessary to reproduce the issue you are running into. Although we would love to help our users as much as possible, diagnosing issues without clear reproduction steps is extremely time-consuming and simply not sustainable.
 
