@@ -1,7 +1,7 @@
 <a name="0.0.5"></a>
 ## [0.0.5](https://github.com/ionic-team/stencil-webpack/compare/v0.0.4...v0.0.5) (2017-12-17)
 
-* Remove "collections" option requirement
+* Remove "collections" array requirement
 * Copy assets relative to main import
 * Use webpacks filesystem
 * TypeScript
