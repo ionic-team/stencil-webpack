@@ -6,7 +6,7 @@
   "scripts": {
     "build": "tsc",
     "watch": "tsc --watch",
-    "deploy": "np",
+    "deploy": "np --any-branch",
     "test": "mocha ./test/**/*.spec.js"
   },
   "files": [
