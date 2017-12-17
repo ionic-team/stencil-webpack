@@ -12,7 +12,7 @@ Stencil combines the best concepts of the most popular front-end frameworks into
 
 First install the component library to be used, such as:
 
-```js
+```
 npm install @ionic/core
 ```
 
@@ -29,7 +29,7 @@ Webpack will bundle the simple "registry" information of all the components into
 
 After installing the plugin, modify your `webpack.config.js` file as such:
 
-```js
+```
 npm install --save-dev @stencil/webpack
 ```
 
