@@ -9,17 +9,29 @@ class StencilPlugin {
       this.fs = compiler.inputFileSystem;
       this.inspectModules(compilation.assets, compilation.modules).then(() => {
         callback();
+
+      }).catch(err => {
+        console.log('Webpack StencilPlugin Error:', err);
+        callback();
       });
     });
   }
 
-  inspectModules(assets: Assets, modules: ComplicationModule[]) {
+  inspectModules(assets: Assets, modules: ComplicationModule[]): Promise<any> {
+    if (!assets || !Array.isArray(modules)) {
+      return Promise.resolve();
+    }
+
     return Promise.all(modules.map(m => {
       return this.addAppAssets(assets, m.resource);
     }));
   }
 
   async addAppAssets(assets: Assets, filePath: string) {
+    if (typeof filePath !== 'string') {
+      return Promise.resolve();
+    }
+
     const appNamespace = path.basename(filePath, '.js');
     const appAssetsDir = path.join(path.dirname(filePath), appNamespace);
 
