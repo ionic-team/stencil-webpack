@@ -1,3 +1,9 @@
+<a name="0.0.6"></a>
+## [0.0.5](https://github.com/ionic-team/stencil-webpack/compare/v0.0.5...v0.0.6) (2017-12-22)
+
+* Improve error handling
+
+
 <a name="0.0.5"></a>
 ## [0.0.5](https://github.com/ionic-team/stencil-webpack/compare/v0.0.4...v0.0.5) (2017-12-17)
 
