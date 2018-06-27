@@ -44,6 +44,10 @@ const stencil = require('@stencil/webpack');
 
 ```
 
+### Options
+
+- **outputBase**: Base directory to copy component assets into (eg `"static/js"`)
+
 ## Related
 
 * [Stencil](https://stenciljs.com/)
