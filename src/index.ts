@@ -3,6 +3,11 @@ import * as path from 'path';
 
 class StencilPlugin {
   private fs: FS;
+  private outputBase: string;
+
+  constructor(options: PluginOptions = {}) {
+    this.outputBase = options.outputBase || ""
+  }
 
   apply(compiler: any) {
     compiler.plugin('emit', (compilation: Complication, callback: Function) => {
@@ -67,7 +72,7 @@ class StencilPlugin {
 
     const data = await this.readFile(filePath);
 
-    const assetPath = normalizePath(path.join(appNamespace, path.relative(appAssetsDir, filePath)));
+    const assetPath = normalizePath(path.join(this.outputBase, appNamespace, path.relative(appAssetsDir, filePath)));
 
     assets[assetPath] = {
       source: () => data,
@@ -166,4 +171,8 @@ interface FsStats {
   isFile(): boolean;
   isDirectory(): boolean;
   size: number;
+}
+
+interface PluginOptions {
+  outputBase?: string
 }
