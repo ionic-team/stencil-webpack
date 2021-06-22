@@ -1,11 +1,10 @@
 import * as path from 'path';
 
-
 class StencilPlugin {
   private fs: FS;
 
   apply(compiler: any) {
-    compiler.plugin('emit', (compilation: Complication, callback: Function) => {
+    compiler.hooks.emit.tapAsync('StencilPlugin', (compilation: Complication, callback: Function) => {
       this.fs = compiler.inputFileSystem;
       this.inspectModules(compilation.assets, compilation.modules).then(() => {
         callback();

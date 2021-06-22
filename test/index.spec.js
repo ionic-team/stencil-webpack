@@ -40,10 +40,10 @@ describe('plugin', () => {
     const plugin = new Plugin({
       collections: 'node_modules/tool-components/toolcomponents'
     });
-    sinon.spy(mockCompiler, 'plugin');
+    sinon.spy(mockCompiler.hooks.emit, 'tapAsync');
     plugin.apply(mockCompiler);
-    expect(mockCompiler.plugin.calledOnce).to.be.true;
-    expect(mockCompiler.plugin.calledWith('emit')).to.be.true;
+    expect(mockCompiler.hooks.emit.tapAsync.calledOnce).to.be.true;
+    expect(mockCompiler.hooks.emit.tapAsync.calledWith('StencilPlugin')).to.be.true;
   });
 
 });
