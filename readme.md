@@ -1,4 +1,7 @@
 [![npm][npm-badge]][npm-badge-url]
+
+**Note:** This plugin is not generaly required and is no longer being maintained by the Stencil team.
+
 # Stencil: A Compiler for Web Components
 
 Stencil is a simple compiler for generating Web Components.
