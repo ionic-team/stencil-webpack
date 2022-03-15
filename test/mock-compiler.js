@@ -1,3 +1,7 @@
 module.exports = class {
-  plugin() {}
+  hooks = {
+    emit: {
+      tapAsync(){}
+    }
+  }
 }
