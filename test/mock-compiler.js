@@ -1,3 +1,9 @@
-module.exports = class {
-  plugin() {}
+module.exports = function() {
+  return {
+    hooks: {
+      emit: {
+        tapAsync: () => {}
+      }
+    }
+  }
 }
